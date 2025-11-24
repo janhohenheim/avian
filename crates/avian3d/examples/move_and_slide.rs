@@ -5,11 +5,12 @@ use avian3d::{
     prelude::*,
 };
 use bevy::{
-    asset::io::web::WebAssetPlugin,
+    asset::{RenderAssetUsages, io::web::WebAssetPlugin},
     color::palettes::tailwind,
     ecs::entity::EntityHashSet,
     gltf::GltfLoaderSettings,
     input::{common_conditions::input_just_pressed, mouse::AccumulatedMouseMotion},
+    mesh::{Indices, PrimitiveTopology},
     pbr::Atmosphere,
     prelude::*,
     window::{CursorGrabMode, CursorOptions},
@@ -46,7 +47,7 @@ fn setup(
     assets: ResMut<AssetServer>,
 ) {
     // Character
-    let shape = Sphere::new(0.5);
+    let shape = Cylinder::new(0.7, 1.8);
     commands.spawn((
         Mesh3d(meshes.add(shape)),
         MeshMaterial3d(materials.add(Color::from(tailwind::SKY_400.with_alpha(0.6)))),
@@ -88,6 +89,51 @@ fn setup(
             }
         }
     });
+
+    for shape in [
+        [
+            (8.0_f32, 0.0_f32, 0.0_f32),
+            (0.0, 0.0, 0.0),
+            (0.0, 0.0, 1.0),
+            (0.0, 3.0, 1.0),
+        ],
+        [
+            (8.0, 0.0, 0.0),
+            (0.0, 0.0, 0.0),
+            (0.0, 0.0, -1.0),
+            (0.0, 3.0, -1.0),
+        ],
+    ] {
+        let mut mesh = Mesh::new(
+            PrimitiveTopology::TriangleList,
+            RenderAssetUsages::default(),
+        );
+        mesh.insert_attribute(
+            Mesh::ATTRIBUTE_POSITION,
+            shape
+                .iter()
+                .map(|(x, y, z)| Vec3::new(*x, *y, *z))
+                .collect::<Vec<_>>(),
+        );
+        mesh.insert_indices(Indices::U32(vec![2, 1, 0, 1, 3, 0, 3, 2, 0, 2, 3, 1]));
+        mesh.compute_normals();
+        commands.spawn((
+            Name::new("Funky Shape"),
+            Collider::convex_hull(
+                shape
+                    .into_iter()
+                    .map(|(a, b, c)| Vec3::from_array([a, b, c]))
+                    .collect(),
+            )
+            .unwrap(),
+            Mesh3d(meshes.add(mesh)),
+            MeshMaterial3d(materials.add(StandardMaterial {
+                base_color: Color::srgb(0.8, 0.7, 0.6),
+                ..default()
+            })),
+            Transform::IDENTITY,
+        ));
+    }
 
     // Light
     commands.spawn((
