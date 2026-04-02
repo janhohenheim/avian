@@ -228,9 +228,13 @@ impl PhysicsGizmoExt for Gizmos<'_, '_, PhysicsGizmos> {
                     );
                 }
             }
-            TypedShape::Polyline(s) => {
-                self.draw_polyline(s.vertices(), s.indices(), position, rotation, color)
-            }
+            TypedShape::Polyline(s) => self.draw_polyline(
+                s.vertices().into_iter().map(|v| vec2(v.x, v.y)),
+                s.indices(),
+                position,
+                rotation,
+                color,
+            ),
             #[cfg(feature = "2d")]
             TypedShape::HalfSpace(s) => {
                 let basis = Vector::new(-s.normal.y, s.normal.x);
