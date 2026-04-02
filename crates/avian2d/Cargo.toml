@@ -83,7 +83,7 @@ bevy = { version = "0.19.0-dev", default-features = false, features = [
 ] }
 bevy_math = { version = "0.19.0-dev", features = ["approx"] }
 glam_matrix_extras = { version = "0.3.0-dev", features = ["bevy_reflect"] }
-bevy_heavy = { version = "0.5.0-dev" }
+bevy_heavy = { git = "https://github.com/janhohenheim/bevy_heavy", branch = "bevy-0.19" }
 bevy_transform_interpolation = { version = "0.5.0-dev" }
 libm = { version = "0.2", optional = true }
 approx = "0.5"
@@ -103,7 +103,7 @@ disqualified = { version = "1.0" }
 [dev-dependencies]
 examples_common_2d = { path = "../examples_common_2d" }
 bevy = { version = "0.19.0-dev", default-features = false, features = ["2d", "ui"] }
-bevy_heavy = { version = "0.5.0-dev", features = ["approx"] }
+bevy_heavy = { git = "https://github.com/janhohenheim/bevy_heavy", branch = "bevy-0.19", features = ["approx"] }
 glam = { version = "0.32", features = ["bytemuck"] }
 bytemuck = "1.19"
 criterion = { version = "0.8", features = ["html_reports"] }
